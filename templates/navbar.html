@@ -3,7 +3,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div style="justify-content: end;" class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
               {% if title=='Proxy Homepage' %}
             <li class="nav-item active">
@@ -12,13 +12,29 @@
                 {% endif %}
               <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
-            {% if title=='Login Page' or title=='Admin Page' %}
-            <li class="nav-item active">
-                {% else %}
-                <li class="nav-item">
+            {% if not session.get('logged_in') %}
+              {% if title=='Login Page'%}
+              <li class="nav-item active">
+                  {% else %}
+                  <li class="nav-item">
+                  {% endif %}
+                <a class="nav-link" href="/login">Login
+                </a>
                 {% endif %}
-              <a class="nav-link" href="/login">Admin
-              </a>
+              {% if usertype == 'admin' %}
+                {% if title=='Admin Page'%}
+                <li class="nav-item active">
+                    {% else %}
+                    <li class="nav-item">
+                    {% endif %}
+                  <a class="nav-link" href="/settings">Proxy Settings
+                  </a>
+                  {% endif %}
+              {% if session.get('logged_in') %}
+                    <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout
+                  </a>
+                  {% endif %}
           </ul>
         </div>
       </nav>

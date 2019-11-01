@@ -55,6 +55,18 @@ class Client(object):
                 'url': url}
         self.send(data)
 
+    def addadminsite(self, url):
+        data = {'mode': 'addadminsite',
+                'url': url}
+        self.send(data)
+
+    def addmanager(self, username, password):
+        data = {'mode': 'addmanager',
+                'username': username,
+                'password': password,
+                }
+        self.send(data)
+
     def clear_cache(self):
         data = {'mode': 'clear_cache'}
         self.send(data)

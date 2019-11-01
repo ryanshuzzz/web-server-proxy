@@ -29,8 +29,9 @@
       </div>
     <br />
     <br />
-    <input type="checkbox" name="private" value="true"> Private mode {% if invalidurl %}
-    <p class="text-danger"> Please enter a valid URL. <br><small>ex. http://www.google.com
+    {% if session.get('logged_in') %}
+    <input type="checkbox" name="private" value="true"> Private mode {% endif %} {% if invalidurl %}
+    <p class="text-danger"> Please enter a valid URL. <br><small>ex. www.google.com
     </small></p>
     {% endif %}<br>
 </form>
