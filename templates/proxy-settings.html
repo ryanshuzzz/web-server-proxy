@@ -1,0 +1,118 @@
+
+        {% extends "layout.html" %}
+        <script src="proxyjs.js"></script>
+            {% block body %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <h2>Proxy Settings</h2> This page can only be visited by proxy admins. </p>
+                    <form role="form" method="POST" id="reused_form">
+                            <div class="form-group">
+                                    <div class="input-group">
+                                            <div class="col-sm">
+                                            <label for="name">List of Admins:</label>
+                                            <ul>
+                                                {% for admin in listofadmins %}
+                                                <li><p>{{ admin['username'] }}</p></li>
+                                                {% endfor %}
+                                            </ul>
+                                            </div>
+                                            <div class="col-sm">
+                                                    <div class="input-group mb-3">
+                                   <input type="text" class="form-control" placeholder="New Admin" name="newadmin">
+                                   <div class="input-group-append">
+                                     <button class="btn btn-primary" type="submit">Add</button>
+                                     </div>
+                                     </div>
+
+                           </div>
+                       </div>
+                    <form role="form" method="POST" id="reused_form" >
+                            <div class="form-group">
+                                    <div class="input-group">
+                                            <div class="col-sm">
+                                            <label for="name"> List of Blocked Sites:</label>
+                                            <ul>
+                                                    {% for site in blockedsites %}
+                                                    <li><p>{{ site }}</p></li>
+                                                    {% endfor %}
+                                            </ul>
+                                            </div>
+                                            <div class="col-sm">
+                                                    <div class="input-group mb-3">
+                                   <input type="text" class="form-control" placeholder="Add Blocked Site" name="newblocked">
+                                   <div class="input-group-append">
+                                     <button class="btn btn-primary" type="submit">Add</button>
+                                     </div>
+                                     </div>
+
+                           </div>
+                       </div>
+
+                       <form role="form" method="POST" id="reused_form" >
+                            <div class="form-group">
+                            <div class="input-group mb-3">
+                                   <div class="input-group">
+                                        <div class="col-sm">
+                                            <label for="name"> List of Cached Sites:</label>
+                                            <ul>
+                                                    {% for cache in cachedsites %}
+                                                    <li><p>{{ cache }}</p></li>
+                                                    {% endfor %}
+                                            </ul>
+                                            </div>
+                                            <div class="col-sm">
+                                            <button class="btn btn-primary" type="submit" name="clear">Clear Cache!</button>
+                                            </div>
+                           </div>
+                       </div>
+                       
+
+                       <form role="form" method="POST" id="reused_form" >
+                            <div class="form-group">
+                                    <div class="input-group">
+                                            <div class="col-sm">
+                                            <label for="name"> Users allowed Private:</label>
+                                            <ul>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                            </ul>
+                                            </div>
+                                            <div class="col-sm">
+                                                    <div class="input-group mb-3">
+                                   <input type="text" class="form-control" placeholder="New User" name="newuser">
+                                   <div class="input-group-append">
+                                     <button class="btn btn-primary" type="submit">Add</button>
+                                     </div>
+                                     </div>
+
+                           </div>
+                       </div>
+
+                       <form role="form" method="POST" id="reused_form" >
+                            <div class="form-group">
+                                    <div class="input-group">
+                                            <div class="col-sm">
+                                            <label for="name"> Sites only for admins:</label>
+                                            <ul>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                                <li><p>test</p></li>
+                                            </ul>
+                                            </div>
+                                            <div class="col-sm">
+                                                    <div class="input-group mb-3">
+                                   <input type="text" class="form-control" placeholder="New Site for Admins" name="newprivate">
+                                   <div class="input-group-append">
+                                     <button class="btn btn-primary" type="submit">Add</button>
+                                     </div>
+                                     </div>
+
+                           </div>
+                       </div>
+            </div>
+        </div>
+    {% endblock %}
