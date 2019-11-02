@@ -6,6 +6,7 @@ import re
 app = Flask(__name__)
 
 
+
 @app.route('/home', methods=['POST'])
 def get_user_input():
     newclient = Client()
@@ -30,13 +31,21 @@ def get_user_input():
 
 @app.route('/login', methods=['POST'])
 def do_admin_login():
-
-    usertype = session.get('user')
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
-
+    newclient = Client()
+    username = request.form['username']
+    password = request.form['password']
+    if password == 'password' and username == 'admin':
         session['logged_in'] = True
         session['user'] = 'admin'
         return redirect(url_for('settings'))
+    elif newclient.isadmin(username, password):
+        session['logged_in'] = True
+        session['user'] = 'admin'
+        return redirect(url_for('settings'))
+    elif newclient.isman(username, password):
+        session['logged_in'] = True
+        session['user'] = 'manager'
+        return redirect(url_for('home'))
     else:
         flash('wrong password!')
         return home()
@@ -54,15 +63,24 @@ def login():
 def logout():
     session['logged_in'] = False
     session['user'] = None
-    usertype = session.get('user')
     return home()
 
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     newclient = Client()
-    # data = newclient.getadmindata()
+    data = newclient.getadmindata()
     usertype = session.get('user')
+    listofadmins = data['admins']
+    listofmans = data['managers']
+    cachedsites = data['cached']
+    adminsites = data['adminsites']
+    blockedsites = data['blocked']
+    # {'admins': self.proxy_manager.proxy_admins,
+    #                  'managers': self.proxy_manager.proxy_man,
+    #                  'cached': self.proxy_manager.cached,
+    #                  'adminsites': self.proxy_manager.adminsites,
+    #                  'blocked': self.proxy_manager.blocked}
     if not session.get('logged_in') and usertype is not 'admin':
         flash('Please log in to access this page.')
         return home()
@@ -70,7 +88,11 @@ def settings():
     if request.method == 'GET':
         return render_template('proxy-settings.html',
                                title='Admin Page',
-                               usertype=usertype)
+                               usertype=usertype,
+                               listofadmins=listofadmins,
+                               cachedsites=cachedsites,
+                               blockedsites=blockedsites,
+                               listofmans=listofmans)
     if request.method == 'POST':
         newadmin = request.form.get('newadmin')
         newadminpass = request.form.get('newadminpass')

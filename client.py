@@ -1,6 +1,7 @@
 import socket
 import sys
 import pickle
+import time
 HOST = 'localhost'
 PORT = 12000
 
@@ -9,46 +10,57 @@ class Client(object):
     def __init__(self, *args, **kwargs):
         self.HOST = HOST
         self.PORT = PORT
-        # self.init_socket()
+        self.init_socket()
 
     def init_socket(self):
-        try:
-            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print("Socket Created")
-            self.connect(self.HOST, self.PORT)
-        except socket.error as error:
-            print(error)
+        # try:
+        self.newclient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Socket Created")
+        self.connect(self.HOST, self.PORT)
+        # except socket.error as error:
+        #     print(error)
+        #     self.newclient.close
 
     def connect(self, HOST, PORT):
-        try:
-            self.client.connect(HOST, PORT)
-            print("Connected to " + HOST + ":" + PORT)
-        except socket.error as error:
-            print(error)
-    
+        # try:
+        self.newclient.connect((HOST, PORT))
+        print("Connected to " + HOST + ":" + str(PORT))
+        # except socket.error as error:
+        #     print(error)
+
     def handlerequest(self, data):
-        send(data)
+        self.send(data)
 
     def send(self, data):
+        print(data)
         serialize = pickle.dumps(data)
-        self.client.send(serialize)
-    
-    def recieve(self):
+        self.newclient.send(serialize)
+
+    def _recieve(self):
         BUFFER = 4096
-        recieve = self.client.recv(BUFFER)
+        recieve = self.newclient.recv(4096)
+        print(recieve)
         deserialize = pickle.loads(recieve)
-        return recieve
+        return deserialize
 
     def getadmindata(self):
         data = {'mode': 'admindata'}
         self.send(data)
-        return self.recieve()
+        return self._recieve()
 
     def addadmin(self, name, passw):
         data = {'mode': 'addadmin',
                 'username': name,
                 'password': passw}
         self.send(data)
+
+    def isadmin(self, name, passw):
+        data = {'mode': 'isadmin',
+                'username': name,
+                'password': passw}
+        self.send(data)
+        recieve = self._recieve()
+        return recieve['isadmin']
 
     def addblocked(self, url):
         data = {'mode': 'addblocked',
@@ -67,7 +79,15 @@ class Client(object):
                 }
         self.send(data)
 
+    def isman(self, username, password):
+        data = {'mode': 'isman',
+                'username': username,
+                'password': password,
+                }
+        self.send(data)
+        recieve = self._recieve()
+        return recieve['isman']
+
     def clear_cache(self):
         data = {'mode': 'clear_cache'}
         self.send(data)
-    

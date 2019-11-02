@@ -57,7 +57,7 @@
                                             <label for="name"> List of Cached Sites:</label>
                                             <ul>
                                                     {% for cache in cachedsites %}
-                                                    <li><p>{{ cache }}</p></li>
+                                                    <li><p>{{ cache['url'] }}</p></li>
                                                     {% endfor %}
                                             </ul>
                                             </div>
@@ -74,10 +74,9 @@
                                             <div class="col-sm">
                                             <label for="name"> Users allowed Private:</label>
                                             <ul>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
+                                                {% for mans in listofmans %}
+                                                <li><p>{{ mans['username'] }}</p></li>
+                                                {% endfor %}
                                             </ul>
                                             </div>
                                             <div class="col-sm">
@@ -97,10 +96,9 @@
                                             <div class="col-sm">
                                             <label for="name"> Sites only for admins:</label>
                                             <ul>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
-                                                <li><p>test</p></li>
+                                                {% for sites in adminsites %}
+                                                <li><p>{{ sites }}</p></li>
+                                                {% endfor %}
                                             </ul>
                                             </div>
                                             <div class="col-sm">
