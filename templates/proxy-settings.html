@@ -1,116 +1,145 @@
+{% extends "layout.html" %}
+<script src="proxyjs.js"></script>
+{% block body %}
+<div class="container ">
+    <h2>Proxy Settings</h2> This page can only be visited by proxy admins. </p>
 
-        {% extends "layout.html" %}
-        <script src="proxyjs.js"></script>
-            {% block body %}
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                    <h2>Proxy Settings</h2> This page can only be visited by proxy admins. </p>
+</div>
+<div class="container">
+    <table class="table table-condensed table-hover table-bordered">
+        <thead>
+            <tr>
+                <th style="width:50%">List of Admins</th>
+                <th style="width:50%">
                     <form role="form" method="POST" id="reused_form">
-                            <div class="form-group">
-                                    <div class="input-group">
-                                            <div class="col-sm">
-                                            <label for="name">List of Admins:</label>
-                                            <ul>
-                                                {% for admin in listofadmins %}
-                                                <li><p>{{ admin['username'] }}</p></li>
-                                                {% endfor %}
-                                            </ul>
-                                            </div>
-                                            <div class="col-sm">
-                                                    <div class="input-group mb-3">
-                                   <input type="text" class="form-control" placeholder="New Admin" name="newadmin">
-                                   <div class="input-group-append">
-                                     <button class="btn btn-primary" type="submit">Add</button>
-                                     </div>
-                                     </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="newadmin">
+                            <input type="password" class="form-control" placeholder="Password" name="newadminpass">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Add Admin</button>
+                            </div>
+                        </div>
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in listofadmins %}
+            <tr>
+                <td>{{ admin['username'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                           </div>
-                       </div>
-                    <form role="form" method="POST" id="reused_form" >
-                            <div class="form-group">
-                                    <div class="input-group">
-                                            <div class="col-sm">
-                                            <label for="name"> List of Blocked Sites:</label>
-                                            <ul>
-                                                    {% for site in blockedsites %}
-                                                    <li><p>{{ site }}</p></li>
-                                                    {% endfor %}
-                                            </ul>
-                                            </div>
-                                            <div class="col-sm">
-                                                    <div class="input-group mb-3">
-                                   <input type="text" class="form-control" placeholder="Add Blocked Site" name="newblocked">
-                                   <div class="input-group-append">
-                                     <button class="btn btn-primary" type="submit">Add</button>
-                                     </div>
-                                     </div>
+<div class="container">
+    <table class="table table-condensed table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            List of Cached Sites
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" method="POST" type="submit" name="clear">Clear
+                                Cache!</button>
+                        </div>
+                    </div>
 
-                           </div>
-                       </div>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cache in cachedsites %}
+            <tr>
+                <td>{{ cache }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                       <form role="form" method="POST" id="reused_form" >
-                            <div class="form-group">
-                            <div class="input-group mb-3">
-                                   <div class="input-group">
-                                        <div class="col-sm">
-                                            <label for="name"> List of Cached Sites:</label>
-                                            <ul>
-                                                    {% for cache in cachedsites %}
-                                                    <li><p>{{ cache['url'] }}</p></li>
-                                                    {% endfor %}
-                                            </ul>
-                                            </div>
-                                            <div class="col-sm">
-                                            <button class="btn btn-primary" type="submit" name="clear">Clear Cache!</button>
-                                            </div>
-                           </div>
-                       </div>
-                       
+<div class="container">
+    <table class="table table-condensed table-hover table-bordered">
+        <thead>
+            <tr>
+                <th style="width:50%">List of Managers </th>
+                <th style="width:50%">
+                    <form role="form" method="POST" id="reused_form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="newman">
+                            <input type="password" class="form-control" placeholder="Password" name="newmanpass">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Add Manager</button>
+                            </div>
+                        </div>
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mans in listofmans %}
+            <tr>
+                <td>{{ mans['username'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                       <form role="form" method="POST" id="reused_form" >
-                            <div class="form-group">
-                                    <div class="input-group">
-                                            <div class="col-sm">
-                                            <label for="name"> Users allowed Private:</label>
-                                            <ul>
-                                                {% for mans in listofmans %}
-                                                <li><p>{{ mans['username'] }}</p></li>
-                                                {% endfor %}
-                                            </ul>
-                                            </div>
-                                            <div class="col-sm">
-                                                    <div class="input-group mb-3">
-                                   <input type="text" class="form-control" placeholder="New User" name="newuser">
-                                   <div class="input-group-append">
-                                     <button class="btn btn-primary" type="submit">Add</button>
-                                     </div>
-                                     </div>
+<div class="container">
+    <table class="table table-condensed table-hover table-bordered">
+        <thead>
+            <tr>
+                <th style="width:50%">List of Blocked Sites</th>
+                <th style="width:50%">
+                    <form role="form" method="POST" id="reused_form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Add Blocked Site" name="newblocked">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for site in blockedsites %}
+            <tr>
+                <td>{{ site }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                           </div>
-                       </div>
-
-                       <form role="form" method="POST" id="reused_form" >
-                            <div class="form-group">
-                                    <div class="input-group">
-                                            <div class="col-sm">
-                                            <label for="name"> Sites only for admins:</label>
-                                            <ul>
-                                                {% for sites in adminsites %}
-                                                <li><p>{{ sites }}</p></li>
-                                                {% endfor %}
-                                            </ul>
-                                            </div>
-                                            <div class="col-sm">
-                                                    <div class="input-group mb-3">
-                                   <input type="text" class="form-control" placeholder="New Site for Admins" name="newprivate">
-                                   <div class="input-group-append">
-                                     <button class="btn btn-primary" type="submit">Add</button>
-                                     </div>
-                                     </div>
-
-                           </div>
-                       </div>
-            </div>
-        </div>
-    {% endblock %}
+<div class="container">
+    <table class="table table-condensed table-hover table-bordered">
+        <thead>
+            <tr>
+                <th style="width:50%">List of Sites for Admins</th>
+                <th style="width:50%">
+                    <form role="form" method="POST" id="reused_form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Add Admin Site" name="newblocked">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for site in adminsites %}
+            <tr>
+                <td>{{ site }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ 
+{% endblock %}

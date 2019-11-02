@@ -58,7 +58,8 @@ class ProxyThread(object):
             user = request['username']
             passw = request['password']
             if user is not None and passw is not None:
-                self.proxy_manager.addman(user, passw)
+                self.proxy_manager.proxy_man.append({'username': user, 'password': passw})
+                print(self.proxy_manager.proxy_man)
         elif request['mode'] == 'isman':
             user = request['username']
             passw = request['password']
@@ -68,6 +69,7 @@ class ProxyThread(object):
             self.proxy_manager.clearcache
 
     def getadmindata(self):
+        print(self.proxy_manager.proxy_man)
         admindata = {'admins': self.proxy_manager.proxy_admins,
                      'managers': self.proxy_manager.proxy_man,
                      'cached': self.proxy_manager.cached,

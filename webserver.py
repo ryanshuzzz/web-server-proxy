@@ -6,7 +6,6 @@ import re
 app = Flask(__name__)
 
 
-
 @app.route('/home', methods=['POST'])
 def get_user_input():
     newclient = Client()
@@ -20,13 +19,15 @@ def get_user_input():
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     url = request.form('url')
     if re.match(httpregex, url) and not request.form.get('private'):
-        newclient.handlerequest({'mode': 'geturl', 'url': url})
+        newclient.handlerequest(
+            {'mode': 'geturl', 'url': url, 'private': False})
     if request.form.get('private') and usertype is 'manager':
-        pass
+        newclient.handlerequest(
+            {'mode': 'geturl', 'url': url, 'private': True})
     return render_template('home.html',
                            title='Proxy Homepage',
                            invalidurl=True,
-                               usertype=usertype)
+                           usertype=usertype)
 
 
 @app.route('/login', methods=['POST'])
@@ -58,6 +59,7 @@ def login():
     return render_template('login.html',
                            title='Login Page',
                            usertype=usertype)
+
 
 @app.route('/logout')
 def logout():
@@ -92,15 +94,16 @@ def settings():
                                listofadmins=listofadmins,
                                cachedsites=cachedsites,
                                blockedsites=blockedsites,
-                               listofmans=listofmans)
+                               listofmans=listofmans,
+                               adminsites=adminsites)
     if request.method == 'POST':
         newadmin = request.form.get('newadmin')
         newadminpass = request.form.get('newadminpass')
         newblocked = request.form.get('newblocked')
         clear = request.form.get('clear')
         newadminsite = request.form.get('newadminsite')
-        newmanager = request.form.get('newmanager')
-        newmanagerpass = request.form.get('newmanagerpass')
+        newmanager = request.form.get('newman')
+        newmanagerpass = request.form.get('newmanpass')
         if newadmin is not None and newadminpass is not None:
             newclient.addadmin(newadmin, newadminpass)
         if newblocked is not None:
@@ -113,8 +116,13 @@ def settings():
             newclient.addmanager(newmanager, newmanagerpass)
 
     return render_template('proxy-settings.html',
-                               title='Admin Page',
-                               usertype=usertype,)
+                           title='Admin Page',
+                           usertype=usertype,
+                           listofadmins=listofadmins,
+                           cachedsites=cachedsites,
+                           blockedsites=blockedsites,
+                           listofmans=listofmans,
+                           adminsites=adminsites)
 
 
 @app.route('/')
@@ -122,7 +130,7 @@ def home():
     usertype = session.get('user')
     return render_template('home.html',
                            title='Proxy Homepage',
-                               usertype=usertype)
+                           usertype=usertype)
 
 
 if __name__ == '__main__':
