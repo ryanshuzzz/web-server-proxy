@@ -26,7 +26,9 @@ class Client(object):
             self.newclient.connect((HOST, PORT))
             print("Connected to " + HOST + ":" + str(PORT))
         except socket.error as error:
+            print('MAKE SURE SERVER IS RUNNING')
             print(error)
+            self.newclient.close()
 
     def handlerequest(self, data):
         self.send(data)
