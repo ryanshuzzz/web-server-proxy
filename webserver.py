@@ -5,34 +5,43 @@ import re
 
 app = Flask(__name__)
 
+newclient = Client()
+
 
 @app.route('/home', methods=['POST'])
 def get_user_input():
-    newclient = Client()
     usertype = session.get('user')
     httpregex = re.compile(
-        r'^(?:http|ftp)s?://'
+        # r'^(?:http|ftp)s?://'
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
         r'localhost|'
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
         r'(?::\d+)?'
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    url = request.form('url')
+    url = request.form['url']
     if re.match(httpregex, url) and not request.form.get('private'):
-        newclient.handlerequest(
+        data = newclient.handlerequest(
             {'mode': 'geturl', 'url': url, 'private': False})
-    if request.form.get('private') and usertype is 'manager':
-        newclient.handlerequest(
+    elif re.match(httpregex, url) and request.form.get('private') and usertype is 'manager':
+        data = newclient.handlerequest(
             {'mode': 'geturl', 'url': url, 'private': True})
+    else:
+        data = ''
+        return render_template('home.html',
+                               title='Proxy Homepage',
+                               invalidurl=True,
+                               usertype=usertype,
+                               data=data)
+    print(data)
     return render_template('home.html',
                            title='Proxy Homepage',
-                           invalidurl=True,
-                           usertype=usertype)
+                           invalidurl=False,
+                           usertype=usertype,
+                           data=data['text'])
 
 
 @app.route('/login', methods=['POST'])
 def do_admin_login():
-    newclient = Client()
     username = request.form['username']
     password = request.form['password']
     if password == 'password' and username == 'admin':
@@ -70,7 +79,6 @@ def logout():
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    newclient = Client()
     data = newclient.getadmindata()
     usertype = session.get('user')
     listofadmins = data['admins']
@@ -78,11 +86,6 @@ def settings():
     cachedsites = data['cached']
     adminsites = data['adminsites']
     blockedsites = data['blocked']
-    # {'admins': self.proxy_manager.proxy_admins,
-    #                  'managers': self.proxy_manager.proxy_man,
-    #                  'cached': self.proxy_manager.cached,
-    #                  'adminsites': self.proxy_manager.adminsites,
-    #                  'blocked': self.proxy_manager.blocked}
     if not session.get('logged_in') and usertype is not 'admin':
         flash('Please log in to access this page.')
         return home()
@@ -115,14 +118,7 @@ def settings():
         if newmanager is not None and newmanagerpass is not None:
             newclient.addmanager(newmanager, newmanagerpass)
 
-    return render_template('proxy-settings.html',
-                           title='Admin Page',
-                           usertype=usertype,
-                           listofadmins=listofadmins,
-                           cachedsites=cachedsites,
-                           blockedsites=blockedsites,
-                           listofmans=listofmans,
-                           adminsites=adminsites)
+    return redirect(url_for('settings'))
 
 
 @app.route('/')

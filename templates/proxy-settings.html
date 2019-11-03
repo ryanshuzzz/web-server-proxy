@@ -43,17 +43,20 @@
                             List of Cached Sites
                         </div>
                         <div>
-                            <button class="btn btn-primary" method="POST" type="submit" name="clear">Clear
-                                Cache!</button>
+                                <form role="form" method="POST" id="reused_form">
+                            <button class="btn btn-primary" type="submit" name="clear">Clear
+                                Cache!</button></form>
+
                         </div>
                     </div>
+                    </th>
 
             </tr>
         </thead>
         <tbody>
             {% for cache in cachedsites %}
             <tr>
-                <td>{{ cache }}</td>
+                <td>{{ cache['url'] }}</td>
             </tr>
             {% endfor %}
         </tbody>

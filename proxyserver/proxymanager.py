@@ -5,7 +5,7 @@ import uuid
 import pickle
 import json
 
-cache_path = 'cache/'
+cache_path = 'proxyserver/cache/'
 
 
 class ProxyManager(object):
@@ -79,16 +79,21 @@ class ProxyManager(object):
 
 # cache
     def cache(self, request, data):
+
+        file_name = str(uuid.uuid4())
+        url = request['url']
         try:
-            url = request['url']
-            file_name = str(uuid.uuid4())
-            file = open(cache_path + file_name, "w+")
-            file.write(data)
+            file = open(cache_path + file_name, "wb")
+            file.write(pickle.dumps(data))
             file.close
             self.cached.append({'url': url,
                                 'filename': file_name})
-        except IOError:
+        except IOError as error:
+            os.remove(cache_path+file_name)
+            self.cached.remove({'url': url,
+                                'filename': file_name})
             print('Error caching file')
+            print(error)
 
     def iscached(self, url):
         for item in self.cached:
@@ -103,17 +108,18 @@ class ProxyManager(object):
         if self.iscached(url):
             file_name = self.getfilename(url)
             if file_name in os.listdir(cache_path):
-                return self.getfile(file_name)
+                data = self.getfile(file_name)
+                return pickle.loads(data)
         return {'text': "NOT CACHED"}
 
     def getfile(self, file_name):
-        filedata = ""
-        file = open(cache_path+file_name, "r")
+        filedata = b""
+        file = open(cache_path+file_name, "rb")
         line = file.readline()
         while line:
             filedata += line
             line = file.readline()
-            return filedata
+        return filedata
 
     def getfilename(self, url):
         for item in self.cached:
@@ -123,5 +129,9 @@ class ProxyManager(object):
 
     def clearcache(self):
         for item in self.cached:
-            os.remove(item['filename'])
+            os.remove(cache_path + item['filename'])
+        files = os.listdir(cache_path)
+        for file in files:
+            if file != '__init__.py':
+                os.remove(cache_path + file)
         self.cached = []

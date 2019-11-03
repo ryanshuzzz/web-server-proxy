@@ -30,18 +30,24 @@ class Client(object):
 
     def handlerequest(self, data):
         self.send(data)
+        return self._recieve()
 
     def send(self, data):
-        print(data)
         serialize = pickle.dumps(data)
+        print(serialize)
         self.newclient.send(serialize)
 
     def _recieve(self):
-        BUFFER = 4096
-        recieve = self.newclient.recv(4096)
-        print(recieve)
-        deserialize = pickle.loads(recieve)
-        return deserialize
+        buff = 1024
+        data = b""
+        while True:
+            recieve_info = self.newclient.recv(buff)
+            
+            data += recieve_info
+            if len(recieve_info) < buff:
+                break
+
+        return pickle.loads(data)
 
     def getadmindata(self):
         data = {'mode': 'admindata'}

@@ -2,8 +2,11 @@ import requests
 from proxymanager import ProxyManager
 import pickle
 import threading
+import urllib3
+import contextlib
 
 lock = threading.Lock()
+
 
 class ProxyThread(object):
 
@@ -21,10 +24,11 @@ class ProxyThread(object):
             try:
                 deserialize = pickle.loads(recieve_info)
                 process = self.processrequest(deserialize)
-                lock.release()
+
                 if process is not None:
                     send_data = process
                     self._send(send_data)
+                lock.release()
             except EOFError:
                 print('no data recieved')
                 break
@@ -38,11 +42,13 @@ class ProxyThread(object):
         print(request['mode'])
         if request['mode'] == 'admindata':
             return self.getadmindata()
+
         elif request['mode'] == 'addadmin':
             user = request['username']
             passw = request['password']
             if user is not None and passw is not None:
                 self.proxy_manager.addadmin(user, passw)
+
         elif request['mode'] == 'isadmin':
             user = request['username']
             passw = request['password']
@@ -52,27 +58,74 @@ class ProxyThread(object):
             url = request['url']
             if url is not None:
                 self.proxy_manager.addblocked(url)
+
         elif request['mode'] == 'addadminsite':
             self.proxy_manager.addadminsite(url)
+
         elif request['mode'] == 'addmanager':
             user = request['username']
             passw = request['password']
             if user is not None and passw is not None:
-                self.proxy_manager.proxy_man.append({'username': user, 'password': passw})
-                print(self.proxy_manager.proxy_man)
+                self.proxy_manager.proxy_man.append(
+                    {'username': user, 'password': passw})
+
         elif request['mode'] == 'isman':
             user = request['username']
             passw = request['password']
             if user is not None and passw is not None:
                 return {'isman': self.proxy_manager.isman(user, passw)}
+
         elif request['mode'] == 'clear_cache':
-            self.proxy_manager.clearcache
+            self.proxy_manager.clearcache()
+
+        elif request['mode'] == 'geturl':
+            return self.handlerequests(request)
 
     def getadmindata(self):
-        print(self.proxy_manager.proxy_man)
         admindata = {'admins': self.proxy_manager.proxy_admins,
                      'managers': self.proxy_manager.proxy_man,
                      'cached': self.proxy_manager.cached,
                      'adminsites': self.proxy_manager.adminsites,
                      'blocked': self.proxy_manager.blocked}
         return admindata
+
+    def handlerequests(self, request):
+        print(request)
+        url = request['url']
+        private = request['private']
+
+        if private:
+            return self.handleprivaterequest(url)
+        if self.proxy_manager.iscached(url):
+            data = self.proxy_manager.getcacheddata(url)
+            if self.checkhead(url, data.headers):
+                returndata = {
+                    'headers': data.headers,
+                    'text': data.text
+                }
+                return returndata
+        else:
+            req = requests.get("http://" + url)
+            data = {
+                'headers': req.headers,
+                'text': req.text
+            }
+            self.proxy_manager.cache(request, req)
+            return data
+
+    def handleprivaterequest(self, url):
+        data = requests.get(url)
+        return {
+                'headers': data.headers,
+                'text': data.text
+            }
+
+    def checkhead(self, url, head):
+        with requests.get(
+                "http://" + url,
+                headers={"If-Modified-Since": head.get('date')}) as r:
+            if r.status_code == 304:
+                return True
+            else:
+                return False
+        return False
