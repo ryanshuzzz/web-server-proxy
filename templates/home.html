@@ -1,38 +1,27 @@
-
-
 {% extends "layout.html" %}
 {% block body %}
-            
-<h1><center>Enter destination</center></h1>
-<form method="post" action="{{ url_for('get_user_input') }}"
-    style="margin:auto;max-width:900px">
 
-    <!-- <div class="input-group mb-3">
+<h1>
+  <center>Enter destination</center>
+</h1>
+<form method="post" action="{{ url_for('get_user_input') }}" style="margin:auto;max-width:900px">
+  <div class="input-group mb-3">
     <div class="input-group-prepend">
-        <span class="input-group-text">http://</span>
-      </div>
-    <input input type="text" class="form-control" placeholder="www.yoursite.com" name="url">
-    <div class="input-group-append">
-    <span  class="input-group-text"><button value="submit" type="submit"><i class="fa fa-search">Submit</i>
-    </button></span>
-    
+      <span class="input-group-text">http://</span>
     </div>
-    </div> -->
-    <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                    <span class="input-group-text">http://</span>
-                  </div>
-        <input type="text" class="form-control" placeholder="www.yoursite.com" name="url">
-        <div class="input-group-append">
-          <button class="btn btn-success" type="submit">Go</button>
-        </div>
-      </div>
-    <br />
-    <br />
-    {% if session.get('logged_in') %}
-    <input type="checkbox" name="private" value="true"> Private mode {% endif %} {% if invalidurl %}
-    <p class="text-danger"> Please enter a valid URL. <br><small>ex. www.google.com
+    <input type="text" class="form-control" placeholder="www.yoursite.com" name="url">
+    <div class="input-group-append">
+      <button class="btn btn-success" type="submit">Go</button>
+    </div>
+  </div>
+  <br />
+  <br />
+  {% if session.get('logged_in') %}
+  <input type="checkbox" name="private" value="true"> Private mode
+  {% endif %}
+  {% if invalidurl %}
+  <p class="text-danger"> Please enter a valid URL. <br><small>ex. www.google.com
     </small></p>
-    {% endif %}<br>
+  {% endif %}<br>
 </form>
 {% endblock %}

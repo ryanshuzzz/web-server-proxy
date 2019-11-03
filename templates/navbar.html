@@ -1,40 +1,41 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Organization Y</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div style="justify-content: end;" class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-              {% if title=='Proxy Homepage' %}
-            <li class="nav-item active">
-                {% else %}
-                <li class="nav-item">
-                {% endif %}
-              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            {% if not session.get('logged_in') %}
-              {% if title=='Login Page'%}
-              <li class="nav-item active">
-                  {% else %}
-                  <li class="nav-item">
-                  {% endif %}
-                <a class="nav-link" href="/login">Login
-                </a>
-                {% endif %}
-              {% if usertype == 'admin' %}
-                {% if title=='Admin Page'%}
-                <li class="nav-item active">
-                    {% else %}
-                    <li class="nav-item">
-                    {% endif %}
-                  <a class="nav-link" href="/settings">Proxy Settings
-                  </a>
-                  {% endif %}
-              {% if session.get('logged_in') %}
-                    <li class="nav-item">
-                  <a class="nav-link" href="/logout">Logout
-                  </a>
-                  {% endif %}
-          </ul>
-        </div>
-      </nav>
+  <a class="navbar-brand" href="/">Organization Y</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div style="justify-content: end;" class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      {% if title=='Proxy Homepage' %}
+      <li class="nav-item active">
+        {% else %}
+      <li class="nav-item">
+        {% endif %}
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      {% if not session.get('logged_in') %}
+      {% if title=='Login Page'%}
+      <li class="nav-item active">
+        {% else %}
+      <li class="nav-item">
+        {% endif %}
+        <a class="nav-link" href="/login">Login
+        </a>
+        {% endif %}
+        {% if usertype == 'admin' %}
+        {% if title=='Admin Page'%}
+      <li class="nav-item active">
+        {% else %}
+      <li class="nav-item">
+        {% endif %}
+        <a class="nav-link" href="/settings">Proxy Settings
+        </a>
+        {% endif %}
+        {% if session.get('logged_in') %}
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout
+        </a>
+        {% endif %}
+    </ul>
+  </div>
+</nav>

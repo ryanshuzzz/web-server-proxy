@@ -24,7 +24,8 @@ class ProxyServer(object):
             while True:
                 client_sock, client_id = self.accept_clients()
                 print("Client " + str(client_id) + " has made a request")
-                new_thread = threading.Thread(target=ProxyThread, args=(client_sock, client_id))
+                new_thread = threading.Thread(target=ProxyThread,
+                                              args=(client_sock, client_id))
                 new_thread.start()
         except socket.error as message:
             print(message)
