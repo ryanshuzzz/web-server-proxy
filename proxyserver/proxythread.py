@@ -82,7 +82,8 @@ class ProxyThread(object):
             if user is not None and passw is not None:
                 return {'isman': self.proxy_manager.isman(user, passw)}
 
-        elif request['mode'] == 'clear_cache':
+        elif request['mode'] == 'clear_cache':wn a company like Koru Works, your daily driver is pretty much your business card. Tyler Clayton gets this through and through, but that's not the reason he got into this 1jz swapped, clean paint havin' Toyota Cressida. Nah, he got into it because it's got four doors, good looks, but most importantly - durability. Slap some tires on top of this thing and go wild at a drift event. Then drive back home. No trailer necessary. Our kinda dude. 
+
             self.proxy_manager.clearcache()
 
         elif request['mode'] == 'geturl':
