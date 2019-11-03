@@ -55,7 +55,7 @@ class ProxyManager(object):
 
 # adminsites
     def addadminsite(self, url):
-        self.adminsites.append('url')
+        self.adminsites.append(url)
 
     def isadminsite(self, url):
         if url in self.adminsites:

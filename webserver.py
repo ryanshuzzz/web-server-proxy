@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import session, abort
 from client import Client
 import os
 import re
@@ -10,6 +11,7 @@ newclient = Client()
 
 @app.route('/home', methods=['POST'])
 def get_user_input():
+    data = {'text': 'error loading page'}
     usertype = session.get('user')
     httpregex = re.compile(
         # r'^(?:http|ftp)s?://'
@@ -19,20 +21,29 @@ def get_user_input():
         r'(?::\d+)?'
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     url = request.form['url']
-    if re.match(httpregex, url) and not request.form.get('private'):
+    private = request.form.get('private')
+    isadminsite = newclient.isadminsite(url)
+    if re.match(httpregex, url) and not private:
+        if isadminsite and usertype != 'admin':
+            data['text'] = 'THIS SITE IS FOR ADMINS ONLY'
+        else:
+            data = newclient.handlerequest(
+                {'mode': 'geturl', 'url': url, 'private': False})
+    elif re.match(httpregex, url) and usertype == 'admin':
         data = newclient.handlerequest(
             {'mode': 'geturl', 'url': url, 'private': False})
-    elif re.match(httpregex, url) and request.form.get('private') and usertype is 'manager':
-        data = newclient.handlerequest(
-            {'mode': 'geturl', 'url': url, 'private': True})
+    elif re.match(httpregex, url) and private:
+        if usertype == 'manager' or usertype == 'admin':
+            if usertype == 'manager' and isadminsite:
+                data['text'] = 'THIS SITE IS FOR ADMINS ONLY'
+            data = newclient.handlerequest(
+                {'mode': 'geturl', 'url': url, 'private': True})
     else:
-        data = ''
         return render_template('home.html',
                                title='Proxy Homepage',
                                invalidurl=True,
                                usertype=usertype,
-                               data=data)
-    print(data)
+                               data=data['text'])
     return render_template('home.html',
                            title='Proxy Homepage',
                            invalidurl=False,
@@ -89,7 +100,6 @@ def settings():
     if not session.get('logged_in') and usertype is not 'admin':
         flash('Please log in to access this page.')
         return home()
-
     if request.method == 'GET':
         return render_template('proxy-settings.html',
                                title='Admin Page',

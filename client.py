@@ -13,20 +13,20 @@ class Client(object):
         self.init_socket()
 
     def init_socket(self):
-        # try:
-        self.newclient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("Socket Created")
-        self.connect(self.HOST, self.PORT)
-        # except socket.error as error:
-        #     print(error)
-        #     self.newclient.close
+        try:
+            self.newclient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print("Socket Created")
+            self.connect(self.HOST, self.PORT)
+        except socket.error as error:
+            print(error)
+            self.newclient.close
 
     def connect(self, HOST, PORT):
-        # try:
-        self.newclient.connect((HOST, PORT))
-        print("Connected to " + HOST + ":" + str(PORT))
-        # except socket.error as error:
-        #     print(error)
+        try:
+            self.newclient.connect((HOST, PORT))
+            print("Connected to " + HOST + ":" + str(PORT))
+        except socket.error as error:
+            print(error)
 
     def handlerequest(self, data):
         self.send(data)
@@ -34,7 +34,6 @@ class Client(object):
 
     def send(self, data):
         serialize = pickle.dumps(data)
-        print(serialize)
         self.newclient.send(serialize)
 
     def _recieve(self):
@@ -42,7 +41,6 @@ class Client(object):
         data = b""
         while True:
             recieve_info = self.newclient.recv(buff)
-            
             data += recieve_info
             if len(recieve_info) < buff:
                 break
@@ -77,6 +75,13 @@ class Client(object):
         data = {'mode': 'addadminsite',
                 'url': url}
         self.send(data)
+
+    def isadminsite(self, url):
+        data = {'mode': 'isadminsite',
+                'url': url}
+        self.send(data)
+        data = self._recieve()
+        return data
 
     def addmanager(self, username, password):
         data = {'mode': 'addmanager',

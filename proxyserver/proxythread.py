@@ -39,7 +39,6 @@ class ProxyThread(object):
 
     def processrequest(self, request):
         lock.acquire()
-        print(request['mode'])
         if request['mode'] == 'admindata':
             return self.getadmindata()
 
@@ -60,7 +59,15 @@ class ProxyThread(object):
                 self.proxy_manager.addblocked(url)
 
         elif request['mode'] == 'addadminsite':
-            self.proxy_manager.addadminsite(url)
+            url = request['url']
+            self.proxy_manager.adminsites.append(url)
+
+        elif request['mode'] == 'isadminsite':
+            url = request['url']
+            if url in self.proxy_manager.adminsites:
+                return True
+            else:
+                return False
 
         elif request['mode'] == 'addmanager':
             user = request['username']
@@ -93,28 +100,27 @@ class ProxyThread(object):
         print(request)
         url = request['url']
         private = request['private']
-
         if private:
             return self.handleprivaterequest(url)
         if self.proxy_manager.iscached(url):
             data = self.proxy_manager.getcacheddata(url)
+            print(data)
             if self.checkhead(url, data.headers):
                 returndata = {
                     'headers': data.headers,
                     'text': data.text
                 }
                 return returndata
-        else:
-            req = requests.get("http://" + url)
-            data = {
-                'headers': req.headers,
-                'text': req.text
-            }
-            self.proxy_manager.cache(request, req)
-            return data
+        req = requests.get("http://" + url)
+        data = {
+            'headers': req.headers,
+            'text': req.text
+        }
+        self.proxy_manager.cache(request, req)
+        return data
 
     def handleprivaterequest(self, url):
-        data = requests.get(url)
+        data = requests.get("http://" + url)
         return {
                 'headers': data.headers,
                 'text': data.text
